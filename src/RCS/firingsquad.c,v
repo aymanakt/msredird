@@ -1,0 +1,104 @@
+head	1.2;
+access;
+symbols;
+locks;
+comment	@ * @;
+
+
+1.2
+date	99.09.23.08.02.27;	author ayman;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	99.09.23.08.00.35;	author ayman;	state Exp;
+branches;
+next	;
+
+
+desc
+@thread support
+@
+
+
+1.2
+log
+@trivia
+@
+text
+@/*
+** Multi-modem support added by Ayman Akt of Uniware P/L Australia
+*/
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <main.h>
+
+#include <termio.h>    /* struct termios */
+#include <sys/time.h>  /* struct timeval */
+
+#include <list.h>
+#include <sockets.h>
+#include <devicereg.h>
+#include <session.h>
+#include <sredird.h>
+
+ static void Shoot (void);
+
+ void *FiringSquad (void *args)
+
+ {
+  extern msredird *const masterptr;
+
+   pthread_mutex_lock (&masterptr->nready_mutex);
+
+    while (1!=2)
+     {
+       while (masterptr->nready==0)
+	{
+	 pthread_cond_wait (&masterptr->nready_cond, &masterptr->nready_mutex);
+	}
+
+      Shoot ();
+      say ("a thread exited...\n");
+      masterptr->nready--;
+      PrintSessions ();
+     }
+
+   return NULL;
+
+ }  /**/
+
+
+ static void Shoot (void)
+
+ {
+  Session *sesnptr;
+  
+    while (sesnptr=GetFlaggedSession(FIRING_SQUAD))
+     {
+       if (sesnptr->stat&FIRING_SQUAD)  /* redundant... */
+        {
+         CloseSession (sesnptr);
+        }
+     }
+
+ }  /**/
+
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d29 1
+a29 1
+    while (1==1)
+d54 1
+a54 1
+       if (sesnptr->stat&FIRING_SQUAD)
+@

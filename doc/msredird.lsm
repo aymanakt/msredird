@@ -1,0 +1,18 @@
+Begin3
+Title: msredird: RFC 2217 compliant serial port redirector
+Version: 0.2
+Entered-date: 22MAR00
+Description: Msredird is a serial port redirector that is compliant with the
+	RFC 2217 "Telnet Com Port Control Option" protocol. This protocol
+	lets you share a serial port through the network, or control modem
+	pool.   
+Keywords: serial redirection, multimodem, modem pool, RFC 2217 
+Author: ayman@pobox.com (Ayman Akt)
+Maintained-by: ayman@pobox.com (Ayman Akt)
+Primary-site: metalab.unc.edu /pub/Linux/system/serial/
+	      50kb msredird-0.2.tgz	
+Alternate-site: 
+Original-site:  
+Platforms: Linux, POSIX, pthread    
+Copying-policy: GPL
+End

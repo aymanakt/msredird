@@ -1,0 +1,25 @@
+Odd numbers refer to error messages.
+Even numbers refer to informative or warning messages.
+
+Non-loggable error messages get printed on the stderr and have the `###' prefix
+to them.
+
+Non-loggable Informative messages get printed to the stdout and have the `***'
+prefix to them.
+
+Non-loggable warning messages get printed to the stdout and have the '!!!'
+prefix to them.
+
+000 Started 11:31AM EST on Wed, 04 Aug '99
+002 Built 17 devices into list.
+004 Verfied 10 devices...
+006 Removing ``/dev/cuq1a11'' from registry...
+008 Discarded 6 entries from registry.
+010 Fullhouse--connection from 203.34.23.1 rejected!
+012 Allocated /dev/ttyS2 for 223.44.66.1...
+014 
+------------------------------------------------------------------------------
+001 No devices to be opened--aborting...
+003 Device /dev/cuq1a11 failed verify test: (No such device)--discarding...
+005 Couldn't open log file for incoming connection from 22.33.44.55 dev(/dev/tty    S2)--closing connection...
+-007- Session with fd=3 was requested, but sesptr->nEntrie==0!

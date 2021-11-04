@@ -1,0 +1,671 @@
+/*
+** Multi-modem support added by Ayman Akt of Uniware P/L Australia
+*/
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <main.h>
+
+#include <sys/time.h>
+#include <sys/ioctl.h>
+#include <signal.h>
+#include <syslog.h>
+#include <termios.h>
+#include <termio.h>
+
+#include <sockets.h>
+#include <list.h>
+#include <structs.h>
+#include <prefs.h>
+#include <devicereg.h>
+#include <session.h>
+#include <misc.h>
+#include <telnet.h>
+#include <sredird.h>
+
+MODULEID("$Id: main.c,v 1.4 1999/08/13 05:30:11 ayman Exp $");
+
+ static int ReadFromSocket (Session *);
+ static int ReadFromDevice (Session *);
+
+ const char *c_version="2.0";
+
+/* Version id */
+#define SredirdVersionId "Version 2.0"
+
+/* Complete lock file pathname */
+static char *LockFileName;
+
+/* Line state mask set by the client */
+static unsigned char LineStateMask=((unsigned char) 0);
+
+
+/* encapsulates all global variables */
+msredird master;
+msredird *const masterptr=&master;
+
+
+
+   /* Base timeout for stream reading */
+   struct timeval BTimeout;
+   /* Timeout for stream reading */
+   struct timeval RTimeout;
+   /* Pointer to timeout structure to set */
+   struct timeval * ETimeout = &RTimeout;
+
+   clock_t OutBTicks; /* out buffer ticks count */
+   clock_t MaxBTicks; /* out buffer clock ticks limit */
+
+   typedef enum fdtype {SOCK, MODEM} fdtype;
+
+
+ /* HOOK */
+ int main (int argc, char *argv[])
+
+  {
+   extern int ProcessConfigfile (void);
+
+    say ("*** msredird %s.\n", c_version);
+
+    BuildPreferencesTable ();
+    ProcessConfigfile ();
+
+    InitMsredird ();
+
+    BuildDeviceRegistry ();
+    VerifyDeviceRegistry ();
+
+     if (masterptr->discard)
+      {
+       say ("*** Cleaning up registry...\n");
+
+       DiscardUnverifiedDevices ();
+
+       masterptr->discard=0;  /* reset */
+      }
+
+    InitNet ();
+
+    OutBTicks=times(NULL);
+
+    BTimeout.tv_sec=0;
+    BTimeout.tv_usec=ModemStatePolling*1000;
+    MaxBTicks=(BTimeout.tv_usec*CLOCKS_PER_SEC)/(1000*1000);
+
+    /* Register the function to be called on break condition */
+    //signal (SIGINT, BreakFunction);
+
+    {
+     int x;
+     fd_set fd,
+            xfd;
+
+      again:
+      FD_ZERO(&fd);
+      FD_ZERO(&xfd);
+
+      FD_SET(STDIN_FILENO, &fd);
+      FD_SET(masterptr->telnetsock->sock, &fd);
+
+       while (1==1)
+        {
+         x=select(FD_SETSIZE, &fd, NULL, NULL, NULL);
+
+          if (x>0)  /* readable input */
+           {
+             if (FD_ISSET(STDIN_FILENO, &fd))
+              {
+              }
+             else
+             if (FD_ISSET(masterptr->telnetsock->sock, &fd))
+              {
+               AnswerTelnetRequest ();
+              }
+           }
+          else
+          if (x==0)  /* timeout */
+           {
+           }
+          else
+          if ((x==-1)&&(errno!=EINTR))  /* select error */
+           {
+            say ("### select error: %s\n", strerror(errno));
+
+            goto again;
+           }
+
+        }  /* while (1==1) */
+
+    } /* END OF BLOCK */
+
+
+
+
+
+
+
+
+
+
+#if 0
+   extern int ProcessConfigfile (void); 
+
+    say ("*** sredird %s.\n", c_version);
+
+    BuildPreferencesTable ();
+    ProcessConfigfile ();
+
+    InitMsredird ();
+
+    BuildDeviceRegistry (mdmptr);
+    VerifyDeviceRegistry (mdmptr);
+
+     if (masterptr->discard)
+      {
+       say ("*** Cleaning up registry...\n");
+
+       DiscardUnverifiedDevices (mdmptr);
+
+       masterptr->discard=0;  /* reset */
+      }
+
+    InitNet ();
+
+    OutBTicks=times(NULL);
+
+    BTimeout.tv_sec=0;
+    BTimeout.tv_usec=ModemStatePolling*1000;
+    MaxBTicks=(BTimeout.tv_usec*CLOCKS_PER_SEC)/(1000*1000);
+
+    /* Register the function to be called on break condition */
+    signal (SIGINT, BreakFunction);
+
+    {
+     register int i;
+     int x,
+         k,
+         max,
+         j[]={[0 ... (MAXSOCKSCOUNT*2)]=0};
+     fdtype FdType;
+     fd_set fd, /* read fd */
+            wfd, /* write fd */
+            exfd; /* exception fd */
+
+     register Socket *sptr;
+     register ListEntry *eptr;
+     register Modem *mptr;
+     extern Socket *so_hash[];
+     extern Modem *dev_hash[];
+     extern SocketsTable *const sockets;
+#define auxsesnptr ((Session *)eptr->whatever)
+
+      again:
+      max=i=0;
+      FD_ZERO (&fd);
+      FD_ZERO (&wfd);
+      FD_ZERO (&exfd);
+
+       if (ETimeout!=NULL)  *ETimeout=BTimeout;
+
+      /* set telnet socket */
+      {
+       FD_SET((*(j+i++)=masterptr->telnetsock->sock), &fd);
+       if (masterptr->telnetsock->sock>max)  max=masterptr->telnetsock->sock;
+      }
+
+       /* this 'for' block sets the readable/writeable fd's */      
+       for (eptr=sesptr->head; eptr; eptr=eptr->next)
+        {
+          if ((auxsesnptr->sptr->flag&FIRING_SQUAD)||
+              (auxsesnptr->mptr->stat&FIRING_SQUAD))
+           {
+            auxsesnptr->stat|=(FIRING_SQUAD);
+
+            continue; 
+           }
+
+         FD_SET((*(j+i++)=auxsesnptr->sptr->sock), &fd);
+
+         FD_SET((*(j+i++)=auxsesnptr->mptr->devfd), &fd);
+
+          if (IsBufferEmpty(&auxsesnptr->mptr->InBuffer)==False)
+           { /* only set writefd if we got something to send to the modem */
+            FD_SET(auxsesnptr->mptr->devfd, &wfd);
+           }
+
+          if (auxsesnptr->sptr->sock>max)  max=auxsesnptr->sptr->sock;
+          if (auxsesnptr->mptr->devfd>max)  max=auxsesnptr->mptr->devfd;
+        }  /* for */
+
+
+      *(j+i)=max;
+
+      x=select ((*(j+i))+1, &fd, &wfd, &exfd, ETimeout);
+
+       if (x>0) 
+        {
+         register Session *sesnptr;
+
+           /* 
+           ** go thru every socket and devfd
+           ** Each iteration deals with with either mptr or sptr
+           */
+	   for (k=0; k<i; k++)
+	    {
+	      if (!(sptr=so_hash[(j[k])]))  /* saftey net... */
+	       {
+		 if (!(mptr=dev_hash[(j[k])]))  continue;
+	       }
+
+	     sesnptr=LocateSession (sesptr, j[k]);
+
+	     mptr=NULL, sptr=NULL;
+
+	      if (FD_ISSET(*(j+k), &fd))  /* readable sockets or devices */
+	       {
+		 if (mptr=dev_hash[(j[k])])  /* device */
+		  {
+		   /* read from modem */
+		   FdType=MODEM;
+
+		    if (read(mptr->devfd, &mptr->C, 1)==1) 
+		     { 
+		       if (mptr->MaxBTicks>0)  /* always true */
+			{
+			 mptr->OutBuffer[mptr->OutBPos]=mptr->C; 
+			 mptr->OutBPos++;
+
+			  if (mptr->OutBPos==OutBufferSize)  
+			   { 
+			    logf(sesnptr, "mptr->OutBPos==OutBufferSize--"
+				 "calling EscWriteBuffer()\n");
+
+			     EscWriteBuffer (mptr->sptr->sock, mptr->OutBuffer, 
+					     mptr->OutBPos, 0); 
+			     mptr->OutBPos=0; 
+			     mptr->OutBTicks=times (NULL); 
+			    } 
+			} 
+		       else 
+			{
+			 EscWriteChar (mptr->sptr->sock, mptr->C); 
+			}
+		     } 
+		    else 
+		     { 
+		      say ("Error reading from device, may be power lost"); 
+
+		      logf(sesnptr, "Error reading from device %d-"
+			   "Power loast?\n", mptr->devfd);
+
+		      mptr->sptr->flag|=FIRING_SQUAD;
+		     } 
+		  }  /* device */
+		 else
+		 if (sptr=so_hash[(j[k])])  /* socket */
+		  {
+		   FdType=SOCK;
+
+		   sptr->read_func(sptr);
+		  }
+		 else  /* useless block? */
+		 if ((sptr)&&(sptr->index)) /* socket-device pair */
+		  {
+		    if ((((Modem *)sptr->index)->RemoteFlowOff==True)&&
+		       (IsBufferFull(&((Modem *)sptr->index)->InBuffer)==False))
+		     { /* buffer isn't full and remote flow is OFF */
+		       /* Send a flow control resume command */
+		      SendCPCFlowCommand (sptr->sock,
+					  TNASC_FLOWCONTROL_RESUME);
+		      ((Modem *)sptr->index)->RemoteFlowOff=False;
+		     }
+		  }
+	       }  /* readable input */
+
+
+	      if ((sesnptr)&&((sesnptr->sptr->flag&FIRING_SQUAD)||
+		  (sesnptr->mptr->stat&FIRING_SQUAD)))
+	       {
+		say ("*#* Connection corresponding to socket %d placed"
+		     " before firing squad (%s)...\n", sesnptr->sptr->sock,
+		     sesnptr->sptr->haddress);
+
+		CloseSession (sesptr, sesnptr);
+
+		//sesnptr->stat|=FIRING_SQUAD;
+
+		continue;
+	       }
+  
+	     mptr=dev_hash[(j[k])];
+
+	      /* Check for output availability on the device */
+	      if ((mptr)&&(FD_ISSET(mptr->devfd, &wfd)))
+	       {
+		EscRedirectChar (mptr->devfd, GetFromBuffer(&mptr->InBuffer));
+	       }
+
+	      /* Check for output buffer timeout */
+	      if (mptr)
+	       {
+		 if ((mptr->MaxBTicks>0) && 
+		     ((times(NULL)-mptr->OutBTicks)>=mptr->MaxBTicks))
+		  {
+		   EscWriteBuffer (mptr->sptr->sock, 
+				   mptr->OutBuffer, 
+				   mptr->OutBPos, 1);
+		   mptr->OutBPos=0;
+		   mptr->OutBTicks=times (NULL);
+		  }
+	       }
+
+	 /* check for exception errors... */
+
+	    }  /* for */
+        }  /* if x>0 */
+
+       else
+       if (x==0)  /* time out */
+	{
+	   for (eptr=sesptr->head; eptr; eptr=eptr->next)
+	   {
+	    /* Polling timeout, send output buffer */
+	    EscWriteBuffer (auxsesnptr->sptr->sock, auxsesnptr->mptr->OutBuffer,
+			    auxsesnptr->mptr->OutBPos, 2);
+	    auxsesnptr->mptr->OutBPos=0;
+	    auxsesnptr->mptr->OutBTicks=times (NULL);
+	   }
+	}
+       else
+       if ((x==-1)&&(errno!=EINTR)) /* select error */
+	{
+	 /* we should do some clean-up here... */
+	 say ("### select error!\n");  
+	 goto again;
+	}
+
+      //UnblockSignals ();
+
+
+#define ptr auxsesnptr->mptr
+
+
+       /* Fall-thru... */
+       /* 
+       ** Check the port state on each modem and notify the client 
+       ** if it has changed
+       */
+       {
+	  for (eptr=sesptr->head; eptr; eptr=eptr->next)
+	   {
+	     if ((auxsesnptr->mptr->TCPCEnabled==True) && 
+		 (auxsesnptr->mptr->InputFlow==True))
+	      {
+		if (((GetModemState(ptr->DeviceFd, ptr->ModemState)&
+		     (ptr->ModemStateMask)&(ModemStateECMask))) !=
+		     ((ptr->ModemState)&(ptr->ModemStateMask)&
+		     (ModemStateECMask)))
+		 {
+		  ptr->ModemState=GetModemState (ptr->DeviceFd, ptr->ModemState);
+     
+		  SendCPCByteCommand (auxsesnptr, TNASC_NOTIFY_MODEMSTATE,
+		   (ptr->ModemState&ptr->ModemStateMask));
+		  log ("Sent modem state: %u",
+		      (unsigned int) (ptr->ModemState&ptr->ModemStateMask));
+		  } /* if 2 */
+	      } /* if 1 */
+	   } /* for */
+       }  /* end of block */
+#undef ptr
+
+      goto again;
+
+    }  /* main loop block */
+
+   goto again;
+#endif
+ }  /*EOM*/
+
+#undef sesnptr
+
+
+ int TELNET_Readme (Socket *sptr)
+
+ {
+  register Modem *mptr;
+
+   mptr=(Modem *)sptr->index;
+
+    if (sptr->flag&AWAITINGUSERNAME)  /* initiation... */
+     {
+      sptr->flag&=~AWAITINGUSERNAME;
+     }
+    
+     {
+      int n;
+      if (read(sptr->sock, &((Modem *)sptr->index)->C, 1)==1)
+       {
+        AddToBuffer (&((Modem *)sptr->index)->InBuffer, 
+                      ((Modem *)sptr->index)->C);
+        //log ("read %s from socket %d\n", 
+        //     ((Modem *)sptr->index)->InBuffer.Buffer, 
+        //     sptr->sock);
+       }
+      else
+       {
+        say ("Communication closed (input) %d\n", sptr->sock, 
+             ((Modem *)sptr->index)->devfd);
+
+        sptr->flag|=FIRING_SQUAD;
+
+        //return(NoError);
+       }
+     }
+
+ }  /**/
+
+
+ int SocketClose (Socket *sptr, const int how)
+
+ {
+  extern SocketsTable *const sockets;
+
+   close (sptr->sock);
+   RemovefromSocketsTable (sockets, sptr->sock);
+
+ }  /**/
+
+
+ void Thread (void *ptr)
+
+ {
+  int x,
+      max;
+  fd_set rfd,
+         wfd,
+         xfd;
+  Session *sesnptr=(Session *)ptr;
+  Modem *mptr;
+  Socket *sptr;
+
+    if (!sesnptr)
+     {
+      say ("sesnptr=0!\n");
+
+      pthread_exit (-1);      
+     }
+
+   mptr=sesnptr->mptr;
+   sptr=sesnptr->sptr;
+
+   (sesnptr->mptr->devfd>sesnptr->sptr->sock)?
+    (max=sesnptr->mptr->devfd):(max=sesnptr->sptr->sock);
+ 
+   again:
+   FD_ZERO (&rfd);
+   FD_ZERO (&wfd);
+   FD_ZERO (&xfd);
+
+   FD_SET(sptr->sock, &rfd);
+   FD_SET(mptr->devfd, &rfd);
+
+    if (IsBufferEmpty(&mptr->InBuffer)==False)
+     { /* only set writefd if we got something to send to the modem */
+      FD_SET(mptr->devfd, &wfd);
+     }
+
+
+   {
+     while (1==1)
+      {
+       x=select(max+1, &rfd, &wfd, &xfd, NULL);//ETimeout);
+
+	if (x>0)  /* readable input */
+	 {
+	   if (FD_ISSET(sptr->sock, &rfd)) /* socket... */
+	    {
+             ReadFromSocket (sesnptr);
+	    }
+	   else
+	   if (FD_ISSET(mptr->devfd, &rfd))  /* device... */
+	    {
+	     ReadFromDevice (sesnptr);
+	    }
+
+	   if (FD_ISSET(mptr->devfd, &wfd))
+	    {
+	     EscRedirectChar (mptr->devfd, GetFromBuffer(&mptr->InBuffer));
+	    }
+
+	 }
+	else
+	if (x==0)  /* timeout */
+	 {
+          /* send output buffer-stuff from modem */
+          EscWriteBuffer(sptr->sock, mptr->OutBuffer, mptr->OutBPos, 2);
+          mptr->OutBPos=0;
+          mptr-OutBTicks=times(NULL);
+	 }
+	else
+	if (x==-1)  /* select error */
+	 {
+	  say ("### select error: %s\n", strerror(errno));
+
+	  goto again;
+	 }
+
+       {   /* FALL-THROUGH BLOCK */
+
+	 if ((mptr->TCPCEnabled==True)&&(mptr->InputFlow==True)) 
+	  {
+	    if (((GetModemState(mptr->DeviceFd, mptr->ModemState)&
+		 (mptr->ModemStateMask)&(ModemStateECMask))) !=
+		 ((mptr->ModemState)&(mptr->ModemStateMask)&
+		 (ModemStateECMask)))
+	     {
+	      mptr->ModemState=GetModemState(mptr->devfd, mptr->ModemState);
+
+	      SendCPCByteCommand (sesnptr, TNASC_NOTIFY_MODEMSTATE,
+	       (mptr->ModemState&mptr->ModemStateMask));
+	      //log ("Sent modem state: %u",
+		  //(unsigned int) (mptr->ModemState&mptr->ModemStateMask));
+	      } 
+	  }
+
+       }   /* END-OF FALL-THROUGH BLOCK */
+
+      }  /* while (1==1) */
+
+   }  /* END OF BLOCK */
+
+ }  /**/
+
+
+ static int ReadFromSocket (Session *sesnptr)
+
+ {
+  Modem *mptr;
+  Socket *sptr;
+
+    if (!sesnptr)
+     {
+      return -1;
+     }
+
+   /* sanity check? */
+   mptr=sesnptr->mptr;
+   sptr=mptr->sptr;
+
+    if (read(sptr->sock, &mptr->C, 1)==1)
+     {
+      AddToBuffer (&mptr->InBuffer, mptr->C);
+
+      //log ("read %s from socket %d\n",
+      //     ((Modem *)sptr->index)->InBuffer.Buffer,
+      //     sptr->sock);
+      return 1;
+     }
+    else
+     {
+      say ("Communication closed (input) %d\n", sptr->sock, mptr->devfd);
+
+      return -2;
+     }
+
+ }  /**/
+
+
+ static int ReadFromDevice (Session *sesnptr)
+
+ {
+  Modem *mptr;
+  Socket *sptr;
+
+    if (!sesnptr)
+     {
+      return -1;
+     }
+
+   /* sanity check? */
+   mptr=sesnptr->mptr;
+   sptr=mptr->sptr;
+ 
+    if (read(mptr->devfd, &mptr->C, 1)==1)
+     {
+       if (mptr->MaxBTicks>0)  /* always true */
+	{
+	 mptr->OutBuffer[mptr->OutBPos]=mptr->C;
+	 mptr->OutBPos++;
+
+	  if (mptr->OutBPos==OutBufferSize)
+	   {
+	    logf(sesnptr, "mptr->OutBPos==OutBufferSize--"
+		 "calling EscWriteBuffer()\n");
+
+	     EscWriteBuffer (sptr->sock, mptr->OutBuffer,
+			     mptr->OutBPos, 0);
+	     mptr->OutBPos=0;
+	     mptr->OutBTicks=times (NULL);
+	    }
+	}
+       else
+	{
+	 EscWriteChar (sptr->sock, mptr->C);
+	}
+
+      return 1;
+     }
+    else
+     {
+      say ("Error reading from device, may be power lost");
+
+      logf(sesnptr, "Error reading from device %d-"
+	   "Power loast?\n", mptr->devfd);
+
+      return -1;
+     }
+
+ }  /**/
+

@@ -1,0 +1,23 @@
+Can't get any simpler than that...but before we get into that, i'd like
+to remind the reader of this that this package is very 'raw' and it was
+a work in progress before it made it to the public.
+
+
+__You need to have pthread library installed__
+
+- change dir into src
+- issue make
+- issue make install
+- copy the binary into your favourite bin directory.
+
+
+HOWTO
+The configuration file found in /etc/msredird/msredird.conf is rather
+simple and can be used to set the listening port number. Default is 7000.
+
+There's currently only one way of specifying the modem devices, and thats
+through an environmental variable named 'MSREDIRD_DEVLST'.
+The value of it is ':' seperated list of modem devices, e.g.:
+/dev/modem1:/dev/modem2:/dev/modem
+
+Direct your queries to the list. See the 'README' file for more information.

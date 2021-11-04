@@ -1,0 +1,46 @@
+SHARED    := shared
+DEPDIR    := .dep
+OBJDIR    := obj
+SRCDIR    := src
+BINDIR    := bin
+
+##############################################
+PROJDIR   := /usr/home/ayman/proj/cc--new
+##############################################
+
+PROJ_SRCDIR := $(PROJDIR)/$(SRCDIR)
+
+PROJ_SHARED_SRC := $(PROJ_SRCDIR)/$(SHARED)
+PROJ_SHARED_OBJ := $(PROJ_SHARED_SRC)/$(OBJDIR)
+PROJ_SHARED_DEP := $(PROJ_SHARED_SRC)/$(DEPDIR)
+
+INCLUDES   = -I./include
+CFLAGS     = $(INCLUDES) -ggdb3
+DEFS       = -DHAVE_CONFIG_H
+CC         := gcc
+SHELL      := /bin/sh
+
+.SUFFIXES:
+.SUFFIXES: .c .o
+
+PROJ_SHARED_SRC_FILES := $(wildcard $(PROJ_SHARED_SRC)/*.c)
+PROJ_SHARED_DEP_FILES := $(patsubst %.c,$(PROJ_SHARED_DEP)/%.d,$(notdir $(PROJ_SHARED_SRC_FILES)))
+
+
+#
+# Cancel built-in implicit rule for %.o
+#
+%.o : %.c
+
+#
+#Redifine the implicit rule fo %.o
+#
+$(OBJDIR)/%.o : %.c
+	$(CC) -c $(CFLAGS) $(DEFS) $< -o $@
+
+
+$(DEPDIR)/%.d: %.c
+	$(SHELL) -ec '$(CC) -M $(CFLAGS) $< \
+       | sed '\''s/\($*\)\.o[ :]*/$(OBJDIR)\/\1.o $(@D)\/$(@F) : /g'\'' > $@; \
+       [ -s $@ ] || rm -f $@'
+

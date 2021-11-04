@@ -1,0 +1,153 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/darren@hiebert.com/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://darren.hiebert.com/ctags/	/official site/
+!_TAG_PROGRAM_VERSION	3.2.2	/with C, C++, Eiffel, Fortran, and Java  support/
+ActuallyProcess	configfile.c	/^ static void ActuallyProcess (char *line, int mode)$/;"	f	file:
+AddToBuffer	protocol.c	/^ void AddToBuffer (BufferType *B, unsigned char C)$/;"	f
+AddtoList	list.c	/^ ListEntry *AddtoList (List *ptr)$/;"	f
+AddtoPrefsTable	prefs.c	/^ static PrefsTable *AddtoPrefsTable (PrefsTable *new)$/;"	f	file:
+AddtodList	list.c	/^ dListEntry *AddtodList (dList *ptr)$/;"	f
+Align	firingsquad.c	/^ static Session *Align (void)$/;"	f	file:
+AllocEntry	prefs.c	/^ static PrefsTable *AllocEntry (const struct Preference *entry)$/;"	f	file:
+AnswerTelnetRequest	telnet.c	/^ int AnswerTelnetRequest (void)$/;"	f
+Banner	main.c	/^ static void Banner (void)$/;"	f	file:
+BreakFunction	protocol.c	/^ void BreakFunction (int Act)$/;"	f
+BuildDeviceRegistry	devicereg.c	/^ void BuildDeviceRegistry (void)$/;"	f
+BuildPreferencesTable	prefs.c	/^ PrefsTable *BuildPreferencesTable (void)$/;"	f
+CheckDeviceAvailability	telnet.c	/^ int CheckDeviceAvailability (Socket *sptr)$/;"	f
+CleanUpTokens	utils.c	/^ int CleanUpTokens (TokensHdr *tokshdr)$/;"	f
+CleanUpUnverviedDevices	main.c	/^ static void CleanUpUnverviedDevices (void)$/;"	f	file:
+CleanupListfromArray	list.c	/^ void CleanupListfromArray (List *ptr)$/;"	f
+CloseDevice	devicereg.c	/^ int CloseDevice (int devfd)$/;"	f
+CloseSession	session.c	/^ int CloseSession (Session *sesnptr)$/;"	f
+CloseSessionLogFile	session.c	/^ void CloseSessionLogFile (Session *sesnptr)$/;"	f
+DeviceRegistry	devicereg.c	/^ static List DeviceRegistry;$/;"	v	file:
+DiscardUnverifiedDevices	devicereg.c	/^ void DiscardUnverifiedDevices (void)$/;"	f
+DottedToHost	net.c	/^ char *DottedToHost (char *dip) $/;"	f
+EscRedirectChar	protocol.c	/^ void EscRedirectChar (int DestFd, unsigned char C)$/;"	f
+EscWriteBuffer	protocol.c	/^ EscWriteBuffer (int DestFd, unsigned char *Buffer, unsigned int BSize, int y)$/;"	f
+EscWriteChar	protocol.c	/^ void EscWriteChar (int DestFd, unsigned char C)$/;"	f
+ExitFunction	protocol.c	/^ void ExitFunction(void)$/;"	f
+FetchLocalhost	net.c	/^ void FetchLocalhost (void)$/;"	f
+FileExist	configfile.c	/^ static unsigned long FileExist (char *file)$/;"	f	file:
+FindEntry	prefs.c	/^ __inline__ PrefsTable *FindEntry (const char *key)$/;"	f
+FiringSquad	firingsquad.c	/^ void *FiringSquad (void *args)$/;"	f
+GetFlaggedDevice	devicereg.c	/^ Modem *GetFlaggedDevice (unsigned flag)$/;"	f
+GetFlaggedSession	session.c	/^ Session *GetFlaggedSession (unsigned flag)$/;"	f
+GetFromBuffer	protocol.c	/^ unsigned char GetFromBuffer (BufferType *B)$/;"	f
+GetModemState	protocol.c	/^unsigned char GetModemState(int DevFd,unsigned char PMState)$/;"	f
+GetPortDataSize	protocol.c	/^ unsigned char GetPortDataSize (int DestFd)$/;"	f
+GetPortFlowControl	protocol.c	/^unsigned char GetPortFlowControl(int DestFd, unsigned char Which)$/;"	f
+GetPortParity	protocol.c	/^ unsigned char GetPortParity (int DestFd)$/;"	f
+GetPortSpeed	protocol.c	/^ unsigned long int GetPortSpeed (int DestFd)$/;"	f
+GetPortStopSize	protocol.c	/^ unsigned char GetPortStopSize (int DestFd)$/;"	f
+GetTaggedDeviceRegEntry	devicereg.c	/^ Modem *GetTaggedDeviceRegEntry (unsigned tag)$/;"	f
+HDBLockFile	protocol.c	/^ int HDBLockFile(char * LockFile, pid_t LockPid)$/;"	f
+HDBUnlockFile	protocol.c	/^ void HDBUnlockFile (char *LockFile, pid_t LockPid)$/;"	f
+HandleCPCCommand	protocol.c	/^ void HandleCPCCommand (Session *sesnptr, unsigned char * Command, size_t CSize)$/;"	f
+HandleIACCommand	protocol.c	/^ void HandleIACCommand (int DestFd, unsigned char *Command, size_t CSize)$/;"	f
+HostToDotted	net.c	/^ char *HostToDotted (char *host)$/;"	f
+HowManyInDeviceReg	devicereg.c	/^ int HowManyInDeviceReg (void)$/;"	f
+InitBuffer	protocol.c	/^ void InitBuffer (BufferType *B)$/;"	f
+InitMsredird	misc.c	/^ void InitMsredird (void)$/;"	f
+InitNet	net.c	/^ void InitNet (void)$/;"	f
+InitSignals	misc.c	/^ void InitSignals (void)$/;"	f
+InitTelnet	telnet.c	/^ int InitTelnet (void)$/;"	f
+IsBufferEmpty	protocol.c	/^ Boolean IsBufferEmpty (BufferType *B)$/;"	f
+IsBufferFull	protocol.c	/^ Boolean IsBufferFull (BufferType *B)$/;"	f
+KillSession	session.c	/^ int KillSession (Session *sesnptr)$/;"	f
+LineStateMask	protocol.c	/^static unsigned char LineStateMask=((unsigned char) 0);$/;"	v	file:
+ListEmpty	list.c	/^ boolean ListEmpty (const List *ptr)$/;"	f
+ListfromArray	list.c	/^ List *ListfromArray (void *a, size_t sz, size_t n)$/;"	f
+LocateDevice	devicereg.c	/^ Modem *LocateDevice (int fd)$/;"	f
+LocateEntry	list.c	/^ ListEntry *LocateEntry (List *ptr, ListEntry *eptr)$/;"	f
+LocateFreeDevice	devicereg.c	/^ Modem *LocateFreeDevice (void)$/;"	f
+LocateSession	session.c	/^ Session *LocateSession (int fd)$/;"	f
+LogMsg	protocol.c	/^ void LogMsg (int LogLevel, char *Msg)$/;"	f
+MasterSession	session.c	/^ static List MasterSession;$/;"	v	file:
+OpenDevice	devicereg.c	/^ Modem *OpenDevice (void)$/;"	f
+OpenFile	utils.c	/^ int OpenFile (File *file)$/;"	f
+OpenSession	session.c	/^ Session *OpenSession (Modem *mptr, Socket *sptr)$/;"	f
+OpenSessionLogFile	session.c	/^ int OpenSessionLogFile (Session *sesnptr)$/;"	f
+PREFS_ARGS	prefs.c	144;"	d	file:
+PREFS_FORMAT	prefs.c	143;"	d	file:
+PrintEntries	prefs.c	/^ void PrintEntries (const PrefsTable *ptr)$/;"	f
+PrintSessions	session.c	/^ void PrintSessions (void)$/;"	f
+ProcessConfigfile	configfile.c	/^ int ProcessConfigfile (void)$/;"	f
+ProcessSETS	configfile.c	/^ static  ProcessSETS (char *line)$/;"	f	file:
+RawIPToDotted	net.c	/^ char *RawIPToDotted (unsigned long raw)$/;"	f
+ReadFromDevice	main.c	/^ static int ReadFromDevice (Session *sesnptr)$/;"	f	file:
+ReadFromSocket	main.c	/^ static int ReadFromSocket (Session *sesnptr)$/;"	f	file:
+RemoveListEntry	list.c	/^ RemoveListEntry (List *lptr, ListEntry *eptr, int how, void (*f)(void *), ...)$/;"	f
+RemoveListHead	list.c	/^ int RemoveListHead (List *lptr, int n, void (*free_func)(ListEntry *))$/;"	f
+RemovefromList	list.c	/^ int RemovefromList (List *ptr, ListEntry *eptr)$/;"	f
+RemovefromdList	list.c	/^ dListEntry *RemovefromdList (dList *ptr, dListEntry *eptr)$/;"	f
+RequestSocket	net.c	/^ int RequestSocket (void)$/;"	f
+ResolveAddress	net.c	/^ int ResolveAddress (const char *address, ResolvedAddress *raddr)$/;"	f
+SendBaudRate	protocol.c	/^ void SendBaudRate (Session *sesnptr, unsigned long int BR)$/;"	f
+SendCPCByteCommand	protocol.c	/^SendCPCByteCommand (Session *sesnptr, unsigned char Command, unsigned char Parm)$/;"	f
+SendCPCFlowCommand	protocol.c	/^ void SendCPCFlowCommand (int DestFd, unsigned char Command)$/;"	f
+SendSignature	protocol.c	/^ void SendSignature (Session *sesnptr, char *Sig)$/;"	f
+SendStr	protocol.c	/^ void SendStr (int DestFd, char *Str)$/;"	f
+SendTelnetOption	protocol.c	/^ void SendTelnetOption (Session *sesnptr, unsigned char Command, char Option)$/;"	f
+SendToModem	devicereg.c	/^ int SendToModem (int fd, char *str)$/;"	f
+SetPortDataSize	protocol.c	/^void SetPortDataSize(int DestFd, unsigned char DataSize)$/;"	f
+SetPortFlowControl	protocol.c	/^void SetPortFlowControl(int DestFd,unsigned char How)$/;"	f
+SetPortParity	protocol.c	/^  void SetPortParity(int DestFd, unsigned char Parity)$/;"	f
+SetPortSpeed	protocol.c	/^ void SetPortSpeed (int DestFd, unsigned long BaudRate)$/;"	f
+SetPortStopSize	protocol.c	/^void SetPortStopSize(int DestFd, unsigned char StopSize)$/;"	f
+SetPref	prefs.c	/^ int SetPref (const char *pref, char *nvalue)$/;"	f
+SetSocketFlags	net.c	/^ int SetSocketFlags (int socket, int ON_OFF, int flags)$/;"	f
+Shoot	firingsquad.c	/^ static void Shoot (Session *sesnptr)$/;"	f	file:
+ShowPreferences	prefs.c	/^ void ShowPreferences (const PrefsTable *ptr, int how)$/;"	f
+SignalFunction	protocol.c	/^ void SignalFunction (int Act)$/;"	f
+SplitIntoTokens	utils.c	/^ int SplitIntoTokens (TokensHdr *tokshdr)$/;"	f
+SplitTokens	utils.c	/^ int SplitTokens (TokensHdr *tokshdr, char *origstr, int ntoks, char div)$/;"	f
+Thread	main.c	/^ void *Thread (void *ptr)$/;"	f
+VerifyDeviceRegistry	devicereg.c	/^ void VerifyDeviceRegistry (void)$/;"	f
+_h_errlist	net.c	/^ static char *_h_errlist[]={$/;"	v	file:
+_h_nerr	net.c	/^static int _h_nerr = sizeof(_h_errlist)\/sizeof(_h_errlist[0]);$/;"	v	file:
+_s_BuildDeviceRegistry	devicereg.c	/^ static void _s_BuildDeviceRegistry  (List *lstptr)$/;"	f	file:
+_s_CloseDevice	devicereg.c	/^ static int _s_CloseDevice (List *lsptr, int devfd)$/;"	f	file:
+_s_CloseSession	session.c	/^ static int _s_CloseSession (List *lstptr, Session *sesnptr)$/;"	f	file:
+_s_DiscardUnverifiedDevices	devicereg.c	/^ static void _s_DiscardUnverifiedDevices (List *lstptr)$/;"	f	file:
+_s_GetFlaggedDevice	devicereg.c	/^ static Modem *_s_GetFlaggedDevice (List *lstptr, unsigned flag)$/;"	f	file:
+_s_GetFlaggedSession	session.c	/^ static Session *_s_GetFlaggedSession (List *lstptr, unsigned flag)$/;"	f	file:
+_s_GetTaggedDeviceRegEntry	devicereg.c	/^ static ListEntry *_s_GetTaggedDeviceRegEntry (List *lstptr, unsigned tag)$/;"	f	file:
+_s_HowManyInDeviceReg	devicereg.c	/^ static int _s_HowManyInDeviceReg (List *lstptr)$/;"	f	file:
+_s_KillSession	session.c	/^ static int _s_KillSession (List *lstptr, Session *sesnptr)$/;"	f	file:
+_s_LocateDevice	devicereg.c	/^ static Modem *_s_LocateDevice (List *lstptr, int devfd)$/;"	f	file:
+_s_LocateFreeDevice	devicereg.c	/^ static Modem *_s_LocateFreeDevice (List *lstptr)$/;"	f	file:
+_s_LocateSession	session.c	/^ static Session *_s_LocateSession (List *lstptr, int fd)$/;"	f	file:
+_s_OpenDevice	devicereg.c	/^ static Modem *_s_OpenDevice (List *lstptr)$/;"	f	file:
+_s_OpenSession	session.c	/^ static Session *_s_OpenSession (List *lstptr, Modem *mptr, Socket *sptr)$/;"	f	file:
+_s_VerifyDeviceRegistry	devicereg.c	/^ static void _s_VerifyDeviceRegistry  (List *lstptr)$/;"	f	file:
+c_version	main.c	/^ const char *c_version="2.0";$/;"	v
+counter	prefs.c	/^ static int counter;$/;"	v	file:
+dListEmpty	list.c	/^ boolean dListEmpty (const dList *ptr)$/;"	f
+devregptr	devicereg.c	/^ static List *const devregptr=&DeviceRegistry;$/;"	v	file:
+f	net.c	/^ static f=1;$/;"	v	file:
+h_strerror	net.c	/^ char *h_strerror (int error)$/;"	f
+isdottedquad	net.c	/^ int isdottedquad (const char *address)$/;"	f
+localhost	net.c	/^ char *localhost="";$/;"	v
+localip	net.c	/^ unsigned long localip;$/;"	v
+main	main.c	/^ int main (int argc, char *argv[])$/;"	f
+master	main.c	/^ msredird master;$/;"	v
+masterptr	main.c	/^ msredird *const masterptr=&master;$/;"	v
+msesnptr	session.c	/^ static List *const msesnptr=&MasterSession;$/;"	v	file:
+nsignal	misc.c	/^ signal_f *nsignal (int signo, signal_f *func)$/;"	f
+preferences	prefs.c	/^ PrefsTable *preferences;$/;"	v
+r_ptr	net.c	/^ struct resolved *const r_ptr=&result;$/;"	v
+result	net.c	/^ struct resolved result;$/;"	v
+set	prefs.c	/^ boolean set (char *value)$/;"	f
+sets	prefs.c	/^ boolean sets (char *value)$/;"	f
+t_compiled	version.c	/^char *t_compiled="Fri Sep 24 1999 at 14:26:28 EST";$/;"	v
+telnetport	telnet.c	/^ unsigned telnetport=7000,$/;"	v
+telnetsock	telnet.c	/^          telnetsock;$/;"	v
+tokenize	utils.c	/^ char *tokenize (char **str, const char c)$/;"	f
+u_compiled	version.c	/^char *u_compiled="ayman@AYmAN";$/;"	v
+valueof	prefs.c	/^ char *valueof (const char *pref)$/;"	f
+whitespace	utils.c	190;"	d	file:
+wipespaces	utils.c	/^ void wipespaces (char *s)$/;"	f
